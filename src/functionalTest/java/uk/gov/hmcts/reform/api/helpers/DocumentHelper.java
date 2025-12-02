@@ -53,4 +53,12 @@ public final class DocumentHelper {
             return out.toByteArray();
         }
     }
+
+    public static byte[] createTiff(int width, int height) throws IOException {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            ImageIO.write(image, "tiff", out);
+            return out.toByteArray();
+        }
+    }
 }
