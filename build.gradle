@@ -4,11 +4,8 @@ plugins {
   id 'io.spring.dependency-management' version '1.1.7'
   id 'org.springframework.boot' version '4.0.0'
   id 'com.github.ben-manes.versions' version '0.53.0'
-  /*
-    Applies analysis tools including checkstyle and OWASP Dependency checker.
-    See https://github.com/hmcts/gradle-java-plugin
- */
   id 'uk.gov.hmcts.java' version '0.12.67'
+  id 'io.freefair.lombok' version '9.1.0'
 }
 
 application {
@@ -126,6 +123,9 @@ ext['snakeyaml.version'] = '2.0'
 dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '3.0.0'
+  implementation group: 'com.azure', name: 'azure-ai-documentintelligence', version: '1.0.6'
+  implementation group: 'org.apache.tika', name: 'tika-core', version: '3.2.3'
+  implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.6'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.9'
 

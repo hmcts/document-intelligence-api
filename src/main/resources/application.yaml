@@ -1,15 +1,10 @@
 server:
   port: 8997
-  shutdown: "graceful"
 
-# If you use a database then uncomment the `group:, readiness: and include: "db"` lines in the health probes and uncomment the datasource section
 management:
   endpoint:
     health:
       show-details: "always"
-      # group:
-      #  readiness:
-      #   include: "db"
   endpoints:
     web:
       base-path: /
@@ -21,32 +16,28 @@ springdoc:
   writer-with-order-by-keys: true
 
 spring:
-  config:
-    import: "optional:configtree:/mnt/secrets/document-intelligence/"
   application:
-    name: Spring Boot Template
-#  datasource:
-#    driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}${DB_OPTIONS:}
-#    username: ${DB_USER_NAME}
-#    password: ${DB_PASSWORD}
-#    properties:
-#      charSet: UTF-8
-#    hikari:
-#      minimumIdle: 2
-#      maximumPoolSize: 10
-#      idleTimeout: 10000
-#      poolName: {to-be-defined}HikariCP
-#      maxLifetime: 7200000
-#      connectionTimeout: 30000
-#  jpa:
-#    properties:
-#      hibernate:
-#        jdbc:
-#          lob:
-#            # silence the 'wall-of-text' - unnecessary exception throw about blob types
-#            non_contextual_creation: true
+    name: Document Intelligence API
+  servlet:
+    multipart:
+      max-file-size: 500MB # Align with Azure maximum
+      max-request-size: 500MB # Align with Azure maximum
 
+# Keys should only be for local - MI or WL identity in production.
 azure:
-  application-insights:
-    instrumentation-key: ${document-intelligence.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+  document-intelligence:
+    endpoint: ${AZURE_ENDPOINT}
+    key: ${AZURE_KEY}
+
+# This would need to be agreed for production rollout
+app:
+  upload:
+    max-file-size: 500MB # Azure maximum
+    max-pdf-pages: 2000 # Azure maximum
+    max-image-pixels: 100000000 # Align with Azure limits
+    min-image-dimension: 50 # Azure minimum
+    max-image-dimension: 10000 # Azure maximum
+    allowed-types:
+      - application/pdf
+      - image/png
+      - image/jpeg

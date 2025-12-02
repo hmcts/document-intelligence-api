@@ -13,13 +13,13 @@ public class OpenAPIConfiguration {
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-            .info(new Info().title("rpe demo")
-                      .description("rpe demo")
+            .info(new Info().title("Document Intelligence API")
+                      .description("Proof of Concept API for Document Intelligence")
                       .version("v0.0.1")
                       .license(new License().name("MIT").url("https://opensource.org/licenses/MIT")))
             .externalDocs(new ExternalDocumentation()
                               .description("README")
-                              .url("https://github.com/hmcts/spring-boot-template"));
+                              .url("https://github.com/hmcts/document-intelligence-api"));
     }
 
 }
