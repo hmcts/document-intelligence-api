@@ -20,8 +20,8 @@ spring:
     name: Document Intelligence API
   servlet:
     multipart:
-      max-file-size: 500MB # Align with Azure maximum
-      max-request-size: 500MB # Align with Azure maximum
+      max-file-size: 25MB
+      max-request-size: 25MB
 
 # Keys should only be for local - MI or WL identity in production.
 azure:
@@ -32,7 +32,7 @@ azure:
 # This would need to be agreed for production rollout
 app:
   upload:
-    max-file-size: 500MB # Azure maximum
+    max-file-size: 25MB
     max-pdf-pages: 2000 # Azure maximum
     max-image-pixels: 100000000 # Align with Azure limits
     min-image-dimension: 50 # Azure minimum
@@ -41,3 +41,4 @@ app:
       - application/pdf
       - image/png
       - image/jpeg
+      - image/tiff

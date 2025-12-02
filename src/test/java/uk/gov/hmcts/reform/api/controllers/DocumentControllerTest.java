@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,10 +15,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import uk.gov.hmcts.reform.api.errorhandling.GlobalExceptionHandler;
 import uk.gov.hmcts.reform.api.errorhandling.exceptions.InvalidFileException;
 import uk.gov.hmcts.reform.api.models.CaseDetails;
+import uk.gov.hmcts.reform.api.models.DivorceCaseDetails;
 import uk.gov.hmcts.reform.api.services.DocumentService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class DocumentControllerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private DocumentService documentService;
     private MockMvc mockMvc;
 
@@ -49,7 +52,7 @@ class DocumentControllerTest {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/documents/divorce")
                 .file(validPdf())
-                .file(casePart("12345")))
+                .file(casePart(validCaseDetails())))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -62,7 +65,7 @@ class DocumentControllerTest {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/documents/probate")
                 .file(validPdf())
-                .file(casePart("ABC123")))
+                .file(casePart(validProbateCaseDetails())))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -76,7 +79,7 @@ class DocumentControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/documents/divorce")
                 .file(validPdf())
-                .file(casePart("12345")))
+                .file(casePart(validCaseDetails())))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.message").value("File exceeds allowed size (5MB)."));
     }
@@ -90,13 +93,30 @@ class DocumentControllerTest {
         );
     }
 
-    private MockMultipartFile casePart(String caseNumber) throws IOException {
+    private MockMultipartFile casePart(Object caseDetails) throws IOException {
         return new MockMultipartFile(
             "case",
             "",
             MediaType.APPLICATION_JSON_VALUE,
-            objectMapper.writeValueAsBytes(new CaseDetails(caseNumber))
+            objectMapper.writeValueAsBytes(caseDetails)
         );
+    }
+
+    private DivorceCaseDetails validCaseDetails() {
+        DivorceCaseDetails details = new DivorceCaseDetails();
+        details.setApplicantName("Jane Doe");
+        details.setRespondentName("John Doe");
+        details.setMarriageDate(LocalDate.parse("2012-05-04"));
+        details.setUkMarriage(true);
+        details.setCountryOfMarriage("UK");
+        details.setTranslationProvided(true);
+        details.setPlaceOfMarriage("London");
+        details.setCertificateNumber("CERT-123");
+        return details;
+    }
+
+    private CaseDetails validProbateCaseDetails() {
+        return new CaseDetails("ABC123");
     }
 
     private byte[] createPdfBytes(int pages) throws IOException {

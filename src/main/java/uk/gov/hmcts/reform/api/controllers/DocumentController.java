@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.hmcts.reform.api.models.CaseDetails;
+import uk.gov.hmcts.reform.api.models.DivorceCaseDetails;
 import uk.gov.hmcts.reform.api.services.DocumentService;
 import uk.gov.hmcts.reform.api.validation.annotations.ValidDocumentFile;
 
@@ -38,7 +39,7 @@ public class DocumentController {
     )
     @Operation(
         summary = "Submit divorce document",
-        description = "Accepts a divorce document (PDF/PNG/JPEG up to 500MB) with associated case details."
+        description = "Accepts a divorce document (PDF/PNG/JPEG/TIFF up to 25MB) with associated case details."
     )
     @ApiResponse(responseCode = "200", description = "Document accepted")
     @ApiResponse(
@@ -48,7 +49,7 @@ public class DocumentController {
     )
     public ResponseEntity<String> processDivorce(
         @ValidDocumentFile @RequestPart("file") MultipartFile file,
-        @Valid @RequestPart("case") CaseDetails caseDetails
+        @Valid @RequestPart("case") DivorceCaseDetails caseDetails
     ) {
         return ok(documentService.processDivorceDocument(file, caseDetails));
     }
@@ -59,7 +60,7 @@ public class DocumentController {
     )
     @Operation(
         summary = "Submit probate document",
-        description = "Accepts a probate document (PDF/PNG/JPEG up to 500MB) with associated case details."
+        description = "Accepts a probate document (PDF/PNG/JPEG/TIFF up to 25MB) with associated case details."
     )
     @ApiResponse(responseCode = "200", description = "Document accepted")
     @ApiResponse(
